@@ -24,6 +24,13 @@ import com.chukimmuoi.googlewebrtcdemo.util.AppRTCUtils;
 import org.webrtc.ThreadUtils;
 
 /**
+ * AppRTCProighborSensor quản lý các chức năng liên quan đến cảm biến tiệm cận trong
+ * bản demo AppRTC.
+ * Trên hầu hết các thiết bị, cảm biến tiệm cận được triển khai dưới dạng cảm biến boolean.
+ * Nó chỉ trả về hai giá trị "NEAR" hoặc "FAR". Ngưỡng được thực hiện trên LUX
+ * giá trị tức là giá trị LUX của cảm biến ánh sáng được so sánh với ngưỡng.
+ * Giá trị LUX lớn hơn ngưỡng có nghĩa là cảm biến tiệm cận trả về "FAR".
+ * Bất cứ điều gì nhỏ hơn giá trị ngưỡng và cảm biến trả về "NEAR".
  * AppRTCProximitySensor manages functions related to the proximity sensor in
  * the AppRTC demo.
  * On most device, the proximity sensor is implemented as a boolean-sensor.

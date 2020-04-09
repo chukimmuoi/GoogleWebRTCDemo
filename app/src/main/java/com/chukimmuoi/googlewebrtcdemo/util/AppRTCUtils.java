@@ -14,6 +14,7 @@ import android.os.Build;
 import android.util.Log;
 
 /**
+ * AppRTCUtils cung cấp các hàm trợ giúp để quản lý luồng an toàn.
  * AppRTCUtils provides helper functions for managing thread safety.
  */
 public final class AppRTCUtils {
@@ -21,6 +22,7 @@ public final class AppRTCUtils {
     }
 
     /**
+     * Phương thức trợ giúp đưa ra một ngoại lệ khi một xác nhận đã thất bại.
      * Helper method which throws an exception  when an assertion has failed.
      */
     public static void assertIsTrue(boolean condition) {
@@ -30,6 +32,7 @@ public final class AppRTCUtils {
     }
 
     /**
+     * Phương pháp trợ giúp để xây dựng một chuỗi thông tin cho Thread.
      * Helper method for building a string of thread information.
      */
     public static String getThreadInfo() {
@@ -38,6 +41,7 @@ public final class AppRTCUtils {
     }
 
     /**
+     * Thông tin về bản dựng hiện tại, được lấy từ các thuộc tính hệ thống.
      * Information about the current build, taken from system properties.
      */
     public static void logDeviceInfo(String tag) {

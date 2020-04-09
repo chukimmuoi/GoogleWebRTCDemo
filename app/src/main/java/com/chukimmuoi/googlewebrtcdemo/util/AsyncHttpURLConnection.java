@@ -19,6 +19,7 @@ import java.net.URL;
 import java.util.Scanner;
 
 /**
+ * Thực hiện yêu cầu http không đồng bộ.
  * Asynchronous http requests implementation.
  */
 public class AsyncHttpURLConnection {
@@ -31,6 +32,7 @@ public class AsyncHttpURLConnection {
     private String contentType;
 
     /**
+     * Yêu cầu gọi lại.
      * Http requests callbacks.
      */
     public interface AsyncHttpEvents {
@@ -107,6 +109,7 @@ public class AsyncHttpURLConnection {
         }
     }
 
+    // Trả về nội dung của InputStream dưới dạng Chuỗi.
     // Return the contents of an InputStream as a String.
     private static String drainStream(InputStream in) {
         Scanner s = new Scanner(in, "UTF-8").useDelimiter("\\A");
