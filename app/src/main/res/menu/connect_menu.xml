@@ -1,13 +1,16 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/action_loopback"
         android:icon="@drawable/ic_loopback_call"
         android:showAsAction="always"
-        android:title="@string/action_loopback"/>
+        android:title="@string/action_loopback"
+        tools:ignore="AppCompatResource" />
     <item
         android:id="@+id/action_settings"
-        android:orderInCategory="100"
         android:icon="@android:drawable/ic_menu_preferences"
+        android:orderInCategory="100"
         android:showAsAction="ifRoom"
-        android:title="@string/action_settings"/>
+        android:title="@string/action_settings"
+        tools:ignore="AppCompatResource" />
 </menu>

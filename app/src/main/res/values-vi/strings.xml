@@ -1,0 +1,223 @@
+<resources>
+    <string name="app_name">GoogleWebRTCDemo</string>
+    <string name="settings_name" translatable="false">AppRTC Cài đặt</string>
+    <string name="disconnect_call">Ngắt kết nối cuộc gọi</string>
+    <string name="room_description">
+        Vui lòng nhập tên phòng. Tên phòng được chia sẻ với mọi người, vì vậy hãy suy nghĩ
+        của một cái gì đó độc đáo và gửi nó cho một người bạn.
+    </string>
+    <string name="favorites">Yêu thích</string>
+    <string name="no_favorites">Không có mục yêu thích</string>
+    <string name="invalid_url_title">URL không hợp lệ</string>
+    <string name="invalid_url_text">URL hoặc tên phòng bạn đã nhập dẫn đến một URL không hợp lệ: %1$s
+    </string>
+    <string name="channel_error_title">Lỗi kết nối</string>
+    <string name="connecting_to">Đang kết nối tới: %1$s</string>
+    <string name="missing_url">FATAL ERROR: Thiếu URL để kết nối.</string>
+    <string name="camera2_texture_only_error">Camera2 chỉ hỗ trợ chụp theo kết cấu. Vô hiệu hóa Camera2 hoặc cho phép chụp theo kết cấu trong các tùy chọn.</string>
+    <string name="ok">đồng ý</string>
+    <string name="switch_camera">Chuyển camera trước / sau</string>
+    <string name="capture_format_change_text">Trượt để thay đổi định dạng chụp</string>
+    <string name="muted">Tắt tiếng</string>
+    <string name="toggle_debug">Chuyển đổi chế độ xem gỡ lỗi</string>
+    <string name="toggle_mic">Bật/tắt micrô</string>
+    <string name="action_settings">Cài đặt</string>
+    <string name="action_loopback">Kết nối vòng lặp</string>
+    <string name="connect_description">Kết nối với phòng</string>
+    <string name="add_favorite_description">Thêm yêu thích</string>
+    <string name="format_description">%1$dx%2$d @ %3$d fps</string>
+    <string name="missing_permissions_try_again">Ứng dụng này thiếu quyền. Nó có thể không hoạt động chính xác. Bạn có muốn thử lại không?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    <!-- Settings strings. -->
+    <string name="pref_room_key">room_preference</string>
+    <string name="pref_room_list_key">room_list_preference</string>
+
+    <string name="pref_videosettings_key">video_settings_key</string>
+    <string name="pref_videosettings_title">Cài đặt video WebRTC.</string>
+
+    <string name="pref_videocall_key">videocall_preference</string>
+    <string name="pref_videocall_title">Cuộc gọi video.</string>
+    <string name="pref_videocall_dlg">Kích hoạt video trong một cuộc gọi.</string>
+    <string name="pref_videocall_default">true</string>
+
+    <string name="pref_screencapture_key">screencapture_preference</string>
+    <string name="pref_screencapture_title">Sử dụng chụp màn hình.</string>
+    <string name="pref_screencapture_default">false</string>
+
+    <string name="pref_camera2_key">camera2_preference</string>
+    <string name="pref_camera2_title">Sử dụng Camera2.</string>
+    <string name="pref_camera2_default">true</string>
+    <string name="pref_camera2_not_supported">Không được hỗ trợ trên thiết bị này.</string>
+
+    <string name="pref_resolution_key">resolution_preference</string>
+    <string name="pref_resolution_title">Độ phân giải video.</string>
+    <string name="pref_resolution_dlg">Nhập độ phân giải video cục bộ AppRTC.</string>
+    <string name="pref_resolution_default">Default</string>
+
+    <string name="pref_fps_key">fps_preference</string>
+    <string name="pref_fps_title">Camera fps.</string>
+    <string name="pref_fps_dlg">Nhập khung hình máy ảnh cục bộ.</string>
+    <string name="pref_fps_default">Default</string>
+
+    <string name="pref_capturequalityslider_key">capturequalityslider_preference</string>
+    <string name="pref_capturequalityslider_title">Chụp thanh trượt chất lượng.</string>
+    <string name="pref_capturequalityslider_dlg">Cho phép thanh trượt để thay đổi chất lượng chụp.</string>
+    <string name="pref_capturequalityslider_default">false</string>
+
+    <string name="pref_maxvideobitrate_key">maxvideobitrate_preference</string>
+    <string name="pref_maxvideobitrate_title">Cài đặt bitrate video tối đa.</string>
+    <string name="pref_maxvideobitrate_dlg">Cài đặt bitrate video tối đa.</string>
+    <string name="pref_maxvideobitrate_default">Default</string>
+
+    <string name="pref_maxvideobitratevalue_key">maxvideobitratevalue_preference</string>
+    <string name="pref_maxvideobitratevalue_title">Tốc độ bit của bộ mã hóa video.</string>
+    <string name="pref_maxvideobitratevalue_dlg">Nhập tốc độ bit tối đa của bộ mã hóa video tính bằng kbps.</string>
+    <string name="pref_maxvideobitratevalue_default">1700</string>
+
+    <string name="pref_videocodec_key">videocodec_preference</string>
+    <string name="pref_videocodec_title">Codec video mặc định.</string>
+    <string name="pref_videocodec_dlg">Chọn codec video mặc định.</string>
+    <string name="pref_videocodec_default">VP8</string>
+
+    <string name="pref_hwcodec_key">hwcodec_preference</string>
+    <string name="pref_hwcodec_title">Tăng tốc phần cứng codec video.</string>
+    <string name="pref_hwcodec_dlg">Sử dụng codec video tăng tốc phần cứng (nếu có).</string>
+    <string name="pref_hwcodec_default">true</string>
+
+    <string name="pref_capturetotexture_key">capturetotexture_preference</string>
+    <string name="pref_capturetotexture_title">Quay video để kết cấu bề mặt.</string>
+    <string name="pref_capturetotexture_dlg">Quay video để kết cấu (nếu có).</string>
+    <string name="pref_capturetotexture_default">true</string>
+
+    <string name="pref_flexfec_key">flexfec_preference</string>
+    <string name="pref_flexfec_title">Codec-agnostic Flexible FEC.</string>
+    <string name="pref_flexfec_dlg">Kích hoạt FlexFEC.</string>
+    <string name="pref_flexfec_default">false</string>
+
+    <string name="pref_value_enabled">Đã bật</string>
+    <string name="pref_value_disabled">Vô hiệu hóa</string>
+
+    <string name="pref_audiosettings_key">audio_settings_key</string>
+    <string name="pref_audiosettings_title">Cài đặt âm thanh WebRTC.</string>
+
+    <string name="pref_startaudiobitrate_key">startaudiobitrate_preference</string>
+    <string name="pref_startaudiobitrate_title">Cài đặt bitrate âm thanh.</string>
+    <string name="pref_startaudiobitrate_dlg">Cài đặt bitrate âm thanh.</string>
+    <string name="pref_startaudiobitrate_default">Default</string>
+
+    <string name="pref_startaudiobitratevalue_key">startaudiobitratevalue_preference</string>
+    <string name="pref_startaudiobitratevalue_title">Bitrate codec âm thanh.</string>
+    <string name="pref_startaudiobitratevalue_dlg">Nhập bitrate codec âm thanh trong kbps.</string>
+    <string name="pref_startaudiobitratevalue_default">32</string>
+
+    <string name="pref_audiocodec_key">audiocodec_preference</string>
+    <string name="pref_audiocodec_title">Codec âm thanh mặc định.</string>
+    <string name="pref_audiocodec_dlg">Chọn codec âm thanh mặc định.</string>
+    <string name="pref_audiocodec_default">OPUS</string>
+
+    <string name="pref_noaudioprocessing_key">audioprocessing_preference</string>
+    <string name="pref_noaudioprocessing_title">Vô hiệu hóa xử lý âm thanh.</string>
+    <string name="pref_noaudioprocessing_dlg">Vô hiệu hóa đường ống xử lý âm thanh.</string>
+    <string name="pref_noaudioprocessing_default">false</string>
+
+    <string name="pref_aecdump_key">aecdump_preference</string>
+    <string name="pref_aecdump_title">Tạo giai thoại.</string>
+    <string name="pref_aecdump_dlg">Cho phép ghi âm chẩn đoán.</string>
+    <string name="pref_aecdump_default">false</string>
+
+    <string name="pref_enable_save_input_audio_to_file_key">enable_key</string>
+    <string name="pref_enable_save_input_audio_to_file_title">Lưu âm thanh đầu vào vào tập tin.</string>
+    <string name="pref_enable_save_input_audio_to_file_dlg">Lưu âm thanh đầu vào vào tập tin.</string>
+    <string name="pref_enable_save_input_audio_to_file_default">false</string>
+
+    <string name="pref_opensles_key">opensles_preference</string>
+    <string name="pref_opensles_title">Sử dụng OpenSL ES để phát lại âm thanh.</string>
+    <string name="pref_opensles_dlg">Sử dụng OpenSL ES để phát lại âm thanh.</string>
+    <string name="pref_opensles_default">false</string>
+
+    <string name="pref_disable_built_in_aec_key">disable_built_in_aec_preference</string>
+    <string name="pref_disable_built_in_aec_title">Vô hiệu hóa phần cứng AEC.</string>
+    <string name="pref_disable_built_in_aec_dlg">Vô hiệu hóa phần cứng AEC.</string>
+    <string name="pref_disable_built_in_aec_default">false</string>
+    <string name="pref_built_in_aec_not_available">Phần cứng AEC không khả dụng</string>
+
+    <string name="pref_disable_built_in_agc_key">disable_built_in_agc_preference</string>
+    <string name="pref_disable_built_in_agc_title">Vô hiệu hóa AGC phần cứng.</string>
+    <string name="pref_disable_built_in_agc_dlg">Vô hiệu hóa AGC phần cứng.</string>
+    <string name="pref_disable_built_in_agc_default">false</string>
+    <string name="pref_built_in_agc_not_available">AGC phần cứng không có sẵn</string>
+
+    <string name="pref_disable_built_in_ns_key">disable_built_in_ns_preference</string>
+    <string name="pref_disable_built_in_ns_title">Vô hiệu hóa phần cứng NS.</string>
+    <string name="pref_disable_built_in_ns_dlg">Vô hiệu hóa phần cứng NS.</string>
+    <string name="pref_disable_built_in_ns_default">false</string>
+    <string name="pref_built_in_ns_not_available">Phần cứng NS không có sẵn</string>
+
+    <string name="pref_disable_webrtc_agc_and_hpf_key">disable_webrtc_agc_and_hpf_preference</string>
+    <string name="pref_disable_webrtc_agc_and_hpf_title">Vô hiệu hóa WebRTC AGC và HPF.</string>
+    <string name="pref_disable_webrtc_agc_default">false</string>
+
+    <string name="pref_speakerphone_key">speakerphone_preference</string>
+    <string name="pref_speakerphone_title">Loa ngoài.</string>
+    <string name="pref_speakerphone_dlg">Loa ngoài.</string>
+    <string name="pref_speakerphone_default">auto</string>
+
+    <string name="pref_datasettings_key">data_settings_key</string>
+    <string name="pref_datasettings_title">Cài đặt kênh dữ liệu WebRTC.</string>
+
+    <string name="pref_enable_datachannel_key">enable_datachannel_preference</string>
+    <string name="pref_enable_datachannel_title">Kích hoạt kênh dữ liệu.</string>
+    <string name="pref_enable_datachannel_default" translatable="false">true</string>
+
+    <string name="pref_ordered_key">ordered_preference</string>
+    <string name="pref_ordered_title">Đặt tin nhắn.</string>
+    <string name="pref_ordered_default" translatable="false">true</string>
+
+    <string name="pref_data_protocol_key">Subprotocol</string>
+    <string name="pref_data_protocol_title">Phân ngành.</string>
+    <string name="pref_data_protocol_dlg">Nhập tiểu dự án.</string>
+    <string name="pref_data_protocol_default" translatable="false"></string>
+
+    <string name="pref_negotiated_key">negotiated_preference</string>
+    <string name="pref_negotiated_title">Thương lượng.</string>
+    <string name="pref_negotiated_default" translatable="false">false</string>
+
+    <string name="pref_max_retransmit_time_ms_key">max_retransmit_time_ms_preference</string>
+    <string name="pref_max_retransmit_time_ms_title">Độ trễ tối đa để truyền lại.</string>
+    <string name="pref_max_retransmit_time_ms_dlg">Nhập độ trễ tối đa để truyền lại (tính bằng ms).</string>
+    <string name="pref_max_retransmit_time_ms_default" translatable="false">-1</string>
+
+    <string name="pref_max_retransmits_key">max_retransmits_preference</string>
+    <string name="pref_max_retransmits_title">Tối đa cố gắng truyền lại.</string>
+    <string name="pref_max_retransmits_dlg">Nhập tối đa các nỗ lực để truyền lại.</string>
+    <string name="pref_max_retransmits_default" translatable="false">-1</string>
+
+    <string name="pref_data_id_key">data_id_preference</string>
+    <string name="pref_data_id_title">Dữ liệu id.</string>
+    <string name="pref_data_id_dlg">Nhập id kênh dữ liệu.</string>
+    <string name="pref_data_id_default" translatable="false">-1</string>
+
+    <string name="pref_miscsettings_key">misc_settings_key</string>
+    <string name="pref_miscsettings_title">Cài đặt linh tinh.</string>
+
+    <string name="pref_room_server_url_key">room_server_url_preference</string>
+    <string name="pref_room_server_url_title">URL máy chủ phòng.</string>
+    <string name="pref_room_server_url_dlg">Nhập URL máy chủ phòng.</string>
+    <string name="pref_room_server_url_default" translatable="false">https://appr.tc</string>
+
+    <string name="pref_displayhud_key">displayhud_preference</string>
+    <string name="pref_displayhud_title">Hiển thị số liệu thống kê cuộc gọi.</string>
+    <string name="pref_displayhud_dlg">Hiển thị số liệu thống kê cuộc gọi.</string>
+    <string name="pref_displayhud_default" translatable="false">false</string>
+
+    <string name="pref_tracing_key">tracing_preference</string>
+    <string name="pref_tracing_title">Theo dõi hiệu suất gỡ lỗi.</string>
+    <string name="pref_tracing_dlg">Theo dõi hiệu suất gỡ lỗi.</string>
+    <string name="pref_tracing_default" translatable="false">false</string>
+
+    <string name="pref_enable_rtceventlog_key">enable_rtceventlog_key</string>
+    <string name="pref_enable_rtceventlog_title">Kích hoạt RtcEventLog.</string>
+    <string name="pref_enable_rtceventlog_default">false</string>
+</resources>
