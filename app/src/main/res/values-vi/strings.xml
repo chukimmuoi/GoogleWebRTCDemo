@@ -3,8 +3,7 @@
     <string name="settings_name" translatable="false">AppRTC Cài đặt</string>
     <string name="disconnect_call">Ngắt kết nối cuộc gọi</string>
     <string name="room_description">
-        Vui lòng nhập tên phòng. Tên phòng được chia sẻ với mọi người, vì vậy hãy suy nghĩ
-        của một cái gì đó độc đáo và gửi nó cho một người bạn.
+        Vui lòng nhập tên phòng. Tên phòng được chia sẻ với mọi người, vì vậy hãy suy nghĩ của một cái gì đó độc đáo và gửi nó cho một người bạn.
     </string>
     <string name="favorites">Yêu thích</string>
     <string name="no_favorites">Không có mục yêu thích</string>
