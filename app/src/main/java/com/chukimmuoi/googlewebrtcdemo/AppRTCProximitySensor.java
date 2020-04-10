@@ -42,6 +42,9 @@ import org.webrtc.ThreadUtils;
 public class AppRTCProximitySensor implements SensorEventListener {
     private static final String TAG = "AppRTCProximitySensor";
 
+    // Lớp này nên được tạo, bắt đầu và dừng trên một luồng
+    // (ví dụ: chủ đề chính). Chúng tôi sử dụng | nonThreadSafe | để đảm bảo rằng đây là
+    // trường hợp. Chỉ hoạt động khi | DEBUG | được đặt thành đúng.
     // This class should be created, started and stopped on one thread
     // (e.g. the main thread). We use |nonThreadSafe| to ensure that this is
     // the case. Only active when |DEBUG| is set to true.
@@ -67,6 +70,7 @@ public class AppRTCProximitySensor implements SensorEventListener {
     }
 
     /**
+     * Kích hoạt cảm biến tiệm cận. Cũng làm khởi tạo nếu được gọi cho lần đầu tiên.
      * Activate the proximity sensor. Also do initialization if called for the
      * first time.
      */
@@ -74,6 +78,7 @@ public class AppRTCProximitySensor implements SensorEventListener {
         threadChecker.checkIsOnValidThread();
         Log.d(TAG, "start" + AppRTCUtils.getThreadInfo());
         if (!initDefaultSensor()) {
+            // Cảm biến tiệm cận không được hỗ trợ trên thiết bị này.
             // Proximity sensor is not supported on this device.
             return false;
         }
@@ -82,6 +87,7 @@ public class AppRTCProximitySensor implements SensorEventListener {
     }
 
     /**
+     * Vô hiệu hóa cảm biến tiệm cận.
      * Deactivate the proximity sensor.
      */
     public void stop() {
@@ -94,6 +100,7 @@ public class AppRTCProximitySensor implements SensorEventListener {
     }
 
     /**
+     * Getter cho trạng thái báo cáo cuối cùng. Đặt thành đúng nếu "near" được báo cáo.
      * Getter for last reported state. Set to true if "near" is reported.
      */
     public boolean sensorReportsNearState() {
@@ -114,6 +121,7 @@ public class AppRTCProximitySensor implements SensorEventListener {
     public final void onSensorChanged(SensorEvent event) {
         threadChecker.checkIsOnValidThread();
         AppRTCUtils.assertIsTrue(event.sensor.getType() == Sensor.TYPE_PROXIMITY);
+        // Là một thực tiễn tốt nhất; làm ít nhất có thể trong phương pháp này và tránh chặn.
         // As a best practice; do as little as possible within this method and
         // avoid blocking.
         float distanceInCentimeters = event.values[0];
@@ -125,6 +133,8 @@ public class AppRTCProximitySensor implements SensorEventListener {
             lastStateReportIsNear = false;
         }
 
+        // Báo cáo về trạng thái mới cho khách hàng lắng nghe. Sau đó khách hàng có thể gọi
+        // sensorReportsNearState() để truy vấn trạng thái hiện tại (NEAR hoặc FAR).
         // Report about new state to listening client. Client can then call
         // sensorReportsNearState() to query the current state (NEAR or FAR).
         if (onSensorStateListener != null) {
@@ -137,6 +147,9 @@ public class AppRTCProximitySensor implements SensorEventListener {
     }
 
     /**
+     * Nhận cảm biến tiệm cận mặc định nếu nó tồn tại. Thiết bị máy tính bảng (ví dụ: Nexus 7)
+     * không hỗ trợ loại cảm biến này và sai sẽ được trả lại trong đó
+     * các trường hợp.
      * Get default proximity sensor if it exists. Tablet devices (e.g. Nexus 7)
      * does not support this type of sensor and false will be returned in such
      * cases.
@@ -154,6 +167,7 @@ public class AppRTCProximitySensor implements SensorEventListener {
     }
 
     /**
+     * Phương pháp trợ giúp để ghi thông tin về cảm biến tiệm cận.
      * Helper method for logging information about the proximity sensor.
      */
     private void logProximitySensorInfo() {
