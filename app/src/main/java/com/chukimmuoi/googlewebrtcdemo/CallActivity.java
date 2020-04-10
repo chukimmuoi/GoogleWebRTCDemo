@@ -751,6 +751,8 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
     }
 
     // -----Implementation of AppRTCClient.AppRTCSignalingEvents ---------------
+    // Tất cả các cuộc gọi lại được gọi từ chủ đề looper báo hiệu websocket và
+    // được định tuyến đến luồng UI.
     // All callbacks are invoked from websocket signaling looper thread and
     // are routed to UI thread.
     private void onConnectedToRoomInternal(final SignalingParameters params) {

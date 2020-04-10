@@ -30,6 +30,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
+ * Triển khai ứng dụng khách WebSocket.
+ *
+ * <p> Tất cả các phương thức công khai nên được gọi từ một luồng thực thi looper
+ * được thông qua trong một hàm tạo, nếu không sẽ có ngoại lệ.
+ * Tất cả các sự kiện được gửi trên cùng một chủ đề.
  * WebSocket client implementation.
  *
  * <p>All public methods should be called from a looper executor thread
@@ -49,21 +54,28 @@ public class WebSocketChannelClient {
     @Nullable
     private String clientID;
     private WebSocketConnectionState state;
+    // Không loại bỏ biến thành viên này.
+    // Nếu điều này được loại bỏ, người quan sát sẽ thu gom rác và điều này gây ra sự cố vỡ.
     // Do not remove this member variable. If this is removed, the observer gets garbage collected and
     // this causes test breakages.
     private WebSocketObserver wsObserver;
     private final Object closeEventLock = new Object();
     private boolean closeEvent;
+    // WebSocket gửi hàng đợi. Tin nhắn được thêm vào hàng đợi khi ứng dụng khách WebSocket
+    // chưa được đăng ký và được sử dụng trong cuộc gọi register().
     // WebSocket send queue. Messages are added to the queue when WebSocket
     // client is not registered and are consumed in register() call.
     private final List<String> wsSendQueue = new ArrayList<>();
 
     /**
+     * Các trạng thái kết nối WebSocket có thể.
      * Possible WebSocket connection states.
      */
     public enum WebSocketConnectionState {NEW, CONNECTED, REGISTERED, CLOSED, ERROR}
 
     /**
+     * Giao diện gọi lại cho các tin nhắn được gửi trên WebSocket.
+     * Tất cả các sự kiện được gửi từ một chủ đề thực thi looper.
      * Callback interface for messages delivered on WebSocket.
      * All events are dispatched from a looper executor thread.
      */
@@ -126,6 +138,7 @@ public class WebSocketChannelClient {
             Log.d(TAG, "C->WSS: " + json.toString());
             ws.sendTextMessage(json.toString());
             state = WebSocketConnectionState.REGISTERED;
+            // Gửi bất kỳ tin nhắn tích lũy trước đó.
             // Send any previously accumulated messages.
             for (String sendMessage : wsSendQueue) {
                 send(sendMessage);
@@ -141,6 +154,7 @@ public class WebSocketChannelClient {
         switch (state) {
             case NEW:
             case CONNECTED:
+                // Lưu trữ các tin nhắn gửi đi và gửi chúng sau khi khách hàng websocket được đăng ký.
                 // Store outgoing messages and send them after websocket client
                 // is registered.
                 Log.d(TAG, "WS ACC: " + message);
@@ -165,6 +179,7 @@ public class WebSocketChannelClient {
         }
     }
 
+    // Cuộc gọi này có thể được sử dụng để gửi tin nhắn WebSocket trước khi kết nối WebSocket được mở.
     // This call can be used to send WebSocket messages before WebSocket
     // connection is opened.
     public void post(String message) {
@@ -176,17 +191,22 @@ public class WebSocketChannelClient {
         checkIfCalledOnValidThread();
         Log.d(TAG, "Disconnect WebSocket. State: " + state);
         if (state == WebSocketConnectionState.REGISTERED) {
+            // Gửi "tạm biệt" đến máy chủ WebSocket.
             // Send "bye" to WebSocket server.
             send("{\"type\": \"bye\"}");
             state = WebSocketConnectionState.CONNECTED;
+            // Gửi http XÓA đến máy chủ http WebSocket.
             // Send http DELETE to http WebSocket server.
             sendWSSMessage("DELETE", "");
         }
+        // Chỉ đóng WebSocket ở trạng thái CONNECTED hoặc ERROR.
         // Close WebSocket in CONNECTED or ERROR states only.
         if (state == WebSocketConnectionState.CONNECTED || state == WebSocketConnectionState.ERROR) {
             ws.disconnect();
             state = WebSocketConnectionState.CLOSED;
 
+            // Đợi sự kiện đóng websocket để ngăn thư viện websocket khỏi
+            // gửi bất kỳ tin nhắn đang chờ xử lý đến chủ đề looper đã xóa.
             // Wait for websocket close event to prevent websocket library from
             // sending any pending messages to deleted looper thread.
             if (waitForComplete) {
@@ -218,6 +238,7 @@ public class WebSocketChannelClient {
         });
     }
 
+    // Gửi không đồng bộ POST / DELETE đến máy chủ WebSocket.
     // Asynchronously send POST/DELETE to WebSocket server.
     private void sendWSSMessage(final String method, final String message) {
         String postUrl = postServerUrl + "/" + roomID + "/" + clientID;
@@ -236,6 +257,8 @@ public class WebSocketChannelClient {
         httpConnection.send();
     }
 
+    // Phương thức trợ giúp cho mục đích gỡ lỗi.
+    // Đảm bảo rằng phương thức WebSocket được gọi trên một luồng looper.
     // Helper method for debugging purposes. Ensures that WebSocket method is
     // called on a looper thread.
     private void checkIfCalledOnValidThread() {
@@ -252,6 +275,7 @@ public class WebSocketChannelClient {
                 @Override
                 public void run() {
                     state = WebSocketConnectionState.CONNECTED;
+                    // Kiểm tra nếu chúng tôi có yêu cầu đăng ký đang chờ xử lý.
                     // Check if we have pending register request.
                     if (roomID != null && clientID != null) {
                         register(roomID, clientID);

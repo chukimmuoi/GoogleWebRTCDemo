@@ -28,6 +28,14 @@ import org.webrtc.IceCandidate;
 import org.webrtc.SessionDescription;
 
 /**
+ * Đàm phán báo hiệu để trò chuyện với https://appr.tc "phòng".
+ * Sử dụng ứng dụng khách <-> chi tiết máy chủ của ứng dụng web Apprtc AppEngine.
+ *
+ * <p> Để sử dụng: tạo một phiên bản của đối tượng này (đăng ký trình xử lý tin nhắn) và
+ * gọi connectToRoom (). Khi kết nối phòng được thiết lập
+ * gọi lại onConnectedToRoom () với các tham số phòng được gọi.
+ * Tin nhắn cho bên khác (với các ứng cử viên Ice địa phương và trả lời SDP) có thể
+ * được gửi sau khi kết nối WebSocket được thiết lập.
  * Negotiates signaling for chatting with https://appr.tc "rooms".
  * Uses the client<->server specifics of the apprtc AppEngine webapp.
  *
@@ -65,6 +73,9 @@ public class WebSocketRTCClient implements AppRTCClient, WebSocketChannelEvents 
     }
 
     // --------------------------------------------------------------------
+    // Thực hiện giao diện AppRTCClient.
+    // Kết nối không đồng bộ với URL phòng AppRTC bằng kết nối được cung cấp
+    // tham số, truy xuất tham số phòng và kết nối với máy chủ WebSocket.
     // AppRTCClient interface implementation.
     // Asynchronously connect to an AppRTC room URL using supplied connection
     // parameters, retrieves room parameters and connect to WebSocket server.
@@ -90,6 +101,7 @@ public class WebSocketRTCClient implements AppRTCClient, WebSocketChannelEvents 
         });
     }
 
+    // Kết nối với phòng - chức năng chạy trên một luồng looper cục bộ.
     // Connects to room - function runs on a local looper thread.
     private void connectToRoomInternal() {
         String connectionUrl = getConnectionUrl(connectionParameters);
@@ -117,6 +129,7 @@ public class WebSocketRTCClient implements AppRTCClient, WebSocketChannelEvents 
         new RoomParametersFetcher(connectionUrl, null, callbacks).makeRequest();
     }
 
+    // Ngắt kết nối khỏi phòng và gửi tin nhắn tạm biệt - chạy trên một chuỗi looper cục bộ.
     // Disconnect from room and send bye messages - runs on a local looper thread.
     private void disconnectFromRoomInternal() {
         Log.d(TAG, "Disconnect. Room state: " + roomState);
@@ -130,6 +143,7 @@ public class WebSocketRTCClient implements AppRTCClient, WebSocketChannelEvents 
         }
     }
 
+    // Các chức năng trợ giúp để có được kết nối, gửi tin nhắn và để lại URL tin nhắn
     // Helper functions to get connection, post message and leave message URLs
     private String getConnectionUrl(RoomConnectionParameters connectionParameters) {
         return connectionParameters.roomUrl + "/" + ROOM_JOIN + "/" + connectionParameters.roomId
@@ -156,6 +170,8 @@ public class WebSocketRTCClient implements AppRTCClient, WebSocketChannelEvents 
         }
     }
 
+    // Gọi lại khi các tham số phòng được trích xuất.
+    // Chạy trên chủ đề looper cục bộ.
     // Callback issued when room parameters are extracted. Runs on local
     // looper thread.
     private void signalingParametersReady(final SignalingParameters signalingParameters) {
@@ -176,14 +192,17 @@ public class WebSocketRTCClient implements AppRTCClient, WebSocketChannelEvents 
         Log.d(TAG, "Leave URL: " + leaveUrl);
         roomState = ConnectionState.CONNECTED;
 
+        // Kết nối và các thông số báo hiệu sự kiện.
         // Fire connection and signaling parameters events.
         events.onConnectedToRoom(signalingParameters);
 
+        // Kết nối và đăng ký ứng dụng khách WebSocket.
         // Connect and register WebSocket client.
         wsClient.connect(signalingParameters.wssUrl, signalingParameters.wssPostUrl);
         wsClient.register(connectionParameters.roomId, signalingParameters.clientId);
     }
 
+    // Gửi SDP cung cấp địa phương cho người tham gia khác.
     // Send local offer SDP to the other participant.
     @Override
     public void sendOfferSdp(final SessionDescription sdp) {
@@ -208,6 +227,7 @@ public class WebSocketRTCClient implements AppRTCClient, WebSocketChannelEvents 
         });
     }
 
+    // Gửi câu trả lời địa phương SDP cho người tham gia khác.
     // Send local answer SDP to the other participant.
     @Override
     public void sendAnswerSdp(final SessionDescription sdp) {
@@ -226,6 +246,7 @@ public class WebSocketRTCClient implements AppRTCClient, WebSocketChannelEvents 
         });
     }
 
+    // Gửi ứng viên Ice cho người tham gia khác.
     // Send Ice candidate to the other participant.
     @Override
     public void sendLocalIceCandidate(final IceCandidate candidate) {
@@ -238,6 +259,7 @@ public class WebSocketRTCClient implements AppRTCClient, WebSocketChannelEvents 
                 jsonPut(json, "id", candidate.sdpMid);
                 jsonPut(json, "candidate", candidate.sdp);
                 if (initiator) {
+                    // Trình khởi tạo cuộc gọi gửi ứng viên ICR đến máy chủ GAE.
                     // Call initiator sends ice candidates to GAE server.
                     if (roomState != ConnectionState.CONNECTED) {
                         reportError("Sending ICE candidate in non connected state.");
@@ -248,6 +270,7 @@ public class WebSocketRTCClient implements AppRTCClient, WebSocketChannelEvents 
                         events.onRemoteIceCandidate(candidate);
                     }
                 } else {
+                    // Nhận cuộc gọi gửi ứng viên ICE đến máy chủ websocket.
                     // Call receiver sends ice candidates to websocket server.
                     wsClient.send(json.toString());
                 }
@@ -255,6 +278,7 @@ public class WebSocketRTCClient implements AppRTCClient, WebSocketChannelEvents 
         });
     }
 
+    // Gửi các ứng cử viên Ice đã xóa cho người tham gia khác.
     // Send removed Ice candidates to the other participant.
     @Override
     public void sendLocalIceCandidateRemovals(final IceCandidate[] candidates) {
@@ -269,6 +293,7 @@ public class WebSocketRTCClient implements AppRTCClient, WebSocketChannelEvents 
                 }
                 jsonPut(json, "candidates", jsonArray);
                 if (initiator) {
+                    // Trình khởi tạo cuộc gọi gửi ứng viên ICE đến máy chủ GAE.
                     // Call initiator sends ice candidates to GAE server.
                     if (roomState != ConnectionState.CONNECTED) {
                         reportError("Sending ICE candidate removals in non connected state.");
@@ -279,6 +304,7 @@ public class WebSocketRTCClient implements AppRTCClient, WebSocketChannelEvents 
                         events.onRemoteIceCandidatesRemoved(candidates);
                     }
                 } else {
+                    // Nhận cuộc gọi gửi ứng viên ICE đến máy chủ websocket.
                     // Call receiver sends ice candidates to websocket server.
                     wsClient.send(json.toString());
                 }
@@ -287,6 +313,9 @@ public class WebSocketRTCClient implements AppRTCClient, WebSocketChannelEvents 
     }
 
     // --------------------------------------------------------------------
+    // Triển khai giao diện WebSocketChannelEvents.
+    // Tất cả các sự kiện được WebSocketChannelClient gọi trên một chuỗi looper cục bộ
+    // (được chuyển cho hàm tạo của máy khách WebSocket).
     // WebSocketChannelEvents interface implementation.
     // All events are called by WebSocketChannelClient on a local looper thread
     // (passed to WebSocket client constructor).

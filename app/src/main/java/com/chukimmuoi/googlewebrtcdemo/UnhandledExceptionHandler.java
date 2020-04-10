@@ -22,6 +22,12 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 /**
+ * Trình trợ giúp Singleton: cài đặt trình xử lý ngoại lệ chưa được xử lý mặc định hiển thị
+ * một hộp thoại thông tin và giết chết ứng dụng. Hữu ích cho các ứng dụng có
+ * xử lý lỗi bao gồm ném RuntimeExceptions.
+ * LƯU Ý: hầu như luôn hữu dụng hơn đối với
+ * Thread.setDefaultUncaughtExceptionHandler () chứ không phải
+ * Thread.setUncaughtExceptionHandler (), để áp dụng cho các chủ đề nền là tốt.
  * Singleton helper: install a default unhandled exception handler which shows
  * an informative dialog and kills the app.  Useful for apps whose
  * error-handling consists of throwing RuntimeExceptions.

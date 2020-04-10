@@ -28,6 +28,12 @@ import java.util.concurrent.ExecutorService;
 import org.webrtc.ThreadUtils;
 
 /**
+ * Thay thế cho WebSocketChannelClient để liên lạc trực tiếp giữa hai địa chỉ IP. Xử lý
+ * báo hiệu giữa hai máy khách bằng kết nối TCP.
+ * <p>
+ * Tất cả các phương thức công khai nên được gọi từ một luồng thực thi looper
+ * được thông qua trong một hàm tạo, nếu không sẽ có ngoại lệ.
+ * Tất cả các sự kiện được gửi trên cùng một chủ đề.
  * Replacement for WebSocketChannelClient for direct communication between two IP addresses. Handles
  * the signaling between the two clients using a TCP connection.
  * <p>
