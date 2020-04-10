@@ -21,6 +21,7 @@ import java.util.List;
 import org.webrtc.CameraEnumerationAndroid.CaptureFormat;
 
 /**
+ * Kiểm soát định dạng chụp dựa trên một trình nghe thanh tìm kiếm.
  * Control capture format based on a seekbar listener.
  */
 public class CaptureQualityController implements SeekBar.OnSeekBarChangeListener {
@@ -28,6 +29,7 @@ public class CaptureQualityController implements SeekBar.OnSeekBarChangeListener
             Arrays.asList(new CaptureFormat(1280, 720, 0, 30000), new CaptureFormat(960, 540, 0, 30000),
                     new CaptureFormat(640, 480, 0, 30000), new CaptureFormat(480, 360, 0, 30000),
                     new CaptureFormat(320, 240, 0, 30000), new CaptureFormat(256, 144, 0, 30000));
+    // Ưu tiên tốc độ khung hình dưới ngưỡng này và độ phân giải trên ngưỡng.
     // Prioritize framerate below this threshold and resolution above the threshold.
     private static final int FRAMERATE_THRESHOLD = 15;
     private TextView captureFormatText;
@@ -51,9 +53,11 @@ public class CaptureQualityController implements SeekBar.OnSeekBarChangeListener
 
             if ((firstFps >= FRAMERATE_THRESHOLD && secondFps >= FRAMERATE_THRESHOLD)
                     || firstFps == secondFps) {
+                // So sánh độ phân giải.
                 // Compare resolution.
                 return first.width * first.height - second.width * second.height;
             } else {
+                // So sánh khung hình/giây.
                 // Compare fps.
                 return firstFps - secondFps;
             }
@@ -70,6 +74,7 @@ public class CaptureQualityController implements SeekBar.OnSeekBarChangeListener
             return;
         }
 
+        // Trích xuất băng thông tối đa (tính bằng millipixels / giây).
         // Extract max bandwidth (in millipixels / second).
         long maxCaptureBandwidth = Long.MIN_VALUE;
         for (CaptureFormat format : formats) {
@@ -77,14 +82,17 @@ public class CaptureQualityController implements SeekBar.OnSeekBarChangeListener
                     Math.max(maxCaptureBandwidth, (long) format.width * format.height * format.framerate.max);
         }
 
+        // Phân số từ 0 đến 1.
         // Fraction between 0 and 1.
         double bandwidthFraction = (double) progress / 100.0;
+        // Thực hiện chuyển đổi quy mô log, vẫn trong khoảng từ 0 đến 1.
         // Make a log-scale transformation, still between 0 and 1.
         final double kExpConstant = 3.0;
         bandwidthFraction =
                 (Math.exp(kExpConstant * bandwidthFraction) - 1) / (Math.exp(kExpConstant) - 1);
         targetBandwidth = bandwidthFraction * maxCaptureBandwidth;
 
+        // Chọn định dạng tốt nhất cho băng thông đích.
         // Choose the best format given a target bandwidth.
         final CaptureFormat bestFormat = Collections.max(formats, compareFormats);
         width = bestFormat.width;
@@ -104,6 +112,7 @@ public class CaptureQualityController implements SeekBar.OnSeekBarChangeListener
         callEvents.onCaptureFormatChange(width, height, framerate);
     }
 
+    // Trả về tốc độ khung hình cao nhất có thể dựa trên băng thông và định dạng.
     // Return the highest frame rate possible based on bandwidth and format.
     private int calculateFramerate(double bandwidth, CaptureFormat format) {
         return (int) Math.round(

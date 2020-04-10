@@ -65,6 +65,7 @@ import org.webrtc.VideoFrame;
 import org.webrtc.VideoSink;
 
 /**
+ * Hoạt động để thiết lập cuộc gọi kết nối ngang hàng, chờ cuộc gọi và xem cuộc gọi.
  * Activity for peer connection call setup, call waiting
  * and call view.
  */
