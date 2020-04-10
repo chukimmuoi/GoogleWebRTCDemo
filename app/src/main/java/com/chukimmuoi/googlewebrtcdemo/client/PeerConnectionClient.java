@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-package com.chukimmuoi.googlewebrtcdemo;
+package com.chukimmuoi.googlewebrtcdemo.client;
 
 import android.content.Context;
 import android.os.Environment;
@@ -36,8 +36,9 @@ import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.chukimmuoi.googlewebrtcdemo.AppRTCClient.SignalingParameters;
-import com.chukimmuoi.googlewebrtcdemo.RecordedAudioToFileController;
+import com.chukimmuoi.googlewebrtcdemo.client.AppRTCClient.SignalingParameters;
+import com.chukimmuoi.googlewebrtcdemo.client.save.audio.RecordedAudioToFileController;
+import com.chukimmuoi.googlewebrtcdemo.client.save.log.RtcEventLog;
 
 import org.webrtc.AudioSource;
 import org.webrtc.AudioTrack;

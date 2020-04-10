@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-package com.chukimmuoi.googlewebrtcdemo;
+package com.chukimmuoi.googlewebrtcdemo.client.save.audio;
 
 import android.media.AudioFormat;
 import android.os.Environment;

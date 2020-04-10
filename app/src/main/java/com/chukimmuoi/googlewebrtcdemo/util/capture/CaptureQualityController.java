@@ -8,10 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-package com.chukimmuoi.googlewebrtcdemo;
+package com.chukimmuoi.googlewebrtcdemo.util.capture;
 
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import com.chukimmuoi.googlewebrtcdemo.R;
+import com.chukimmuoi.googlewebrtcdemo.ui.call.fragment.CallFragment;
 
 import java.util.Arrays;
 import java.util.Collections;

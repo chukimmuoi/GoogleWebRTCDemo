@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-package com.chukimmuoi.googlewebrtcdemo;
+package com.chukimmuoi.googlewebrtcdemo.util.cpu;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -75,7 +75,7 @@ import java.util.concurrent.TimeUnit;
  * jumping up and back down we might create faulty CPU load readings.
  */
 @TargetApi(Build.VERSION_CODES.KITKAT)
-class CpuMonitor {
+public class CpuMonitor {
     private static final String TAG = "CpuMonitor";
     private static final int MOVING_AVERAGE_SAMPLES = 5;
 

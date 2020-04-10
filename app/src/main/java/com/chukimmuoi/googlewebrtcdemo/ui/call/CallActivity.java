@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-package com.chukimmuoi.googlewebrtcdemo;
+package com.chukimmuoi.googlewebrtcdemo.ui.call;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -39,12 +39,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import com.chukimmuoi.googlewebrtcdemo.AppRTCAudioManager.AudioDevice;
-import com.chukimmuoi.googlewebrtcdemo.AppRTCAudioManager.AudioManagerEvents;
-import com.chukimmuoi.googlewebrtcdemo.AppRTCClient.RoomConnectionParameters;
-import com.chukimmuoi.googlewebrtcdemo.AppRTCClient.SignalingParameters;
-import com.chukimmuoi.googlewebrtcdemo.PeerConnectionClient.DataChannelParameters;
-import com.chukimmuoi.googlewebrtcdemo.PeerConnectionClient.PeerConnectionParameters;
+import com.chukimmuoi.googlewebrtcdemo.ui.call.fragment.CallFragment;
+import com.chukimmuoi.googlewebrtcdemo.util.cpu.CpuMonitor;
+import com.chukimmuoi.googlewebrtcdemo.ui.call.fragment.HudFragment;
+import com.chukimmuoi.googlewebrtcdemo.R;
+import com.chukimmuoi.googlewebrtcdemo.util.exception.UnhandledExceptionHandler;
+import com.chukimmuoi.googlewebrtcdemo.client.AppRTCClient;
+import com.chukimmuoi.googlewebrtcdemo.client.PeerConnectionClient;
+import com.chukimmuoi.googlewebrtcdemo.client.direct.DirectRTCClient;
+import com.chukimmuoi.googlewebrtcdemo.client.web.WebSocketRTCClient;
+import com.chukimmuoi.googlewebrtcdemo.manager.AppRTCAudioManager;
+import com.chukimmuoi.googlewebrtcdemo.manager.AppRTCAudioManager.AudioDevice;
+import com.chukimmuoi.googlewebrtcdemo.manager.AppRTCAudioManager.AudioManagerEvents;
+import com.chukimmuoi.googlewebrtcdemo.client.AppRTCClient.RoomConnectionParameters;
+import com.chukimmuoi.googlewebrtcdemo.client.AppRTCClient.SignalingParameters;
+import com.chukimmuoi.googlewebrtcdemo.client.PeerConnectionClient.DataChannelParameters;
+import com.chukimmuoi.googlewebrtcdemo.client.PeerConnectionClient.PeerConnectionParameters;
 
 import org.webrtc.Camera1Enumerator;
 import org.webrtc.Camera2Enumerator;

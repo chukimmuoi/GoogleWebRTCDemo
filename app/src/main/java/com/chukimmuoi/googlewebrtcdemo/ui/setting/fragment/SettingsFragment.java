@@ -8,10 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-package com.chukimmuoi.googlewebrtcdemo;
+package com.chukimmuoi.googlewebrtcdemo.ui.setting.fragment;
 
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
+
+import com.chukimmuoi.googlewebrtcdemo.R;
 
 /**
  * Settings fragment for AppRTC.

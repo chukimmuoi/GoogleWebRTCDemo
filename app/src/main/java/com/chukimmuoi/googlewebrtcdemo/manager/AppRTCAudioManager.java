@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-package com.chukimmuoi.googlewebrtcdemo;
+package com.chukimmuoi.googlewebrtcdemo.manager;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.chukimmuoi.googlewebrtcdemo.R;
 import com.chukimmuoi.googlewebrtcdemo.util.AppRTCUtils;
 
 import org.webrtc.ThreadUtils;
@@ -202,7 +203,7 @@ public class AppRTCAudioManager {
     /**
      * Construction.
      */
-    static AppRTCAudioManager create(Context context) {
+    public static AppRTCAudioManager create(Context context) {
         return new AppRTCAudioManager(context);
     }
 

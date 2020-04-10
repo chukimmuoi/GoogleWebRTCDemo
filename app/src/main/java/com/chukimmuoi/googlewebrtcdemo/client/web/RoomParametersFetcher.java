@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-package com.chukimmuoi.googlewebrtcdemo;
+package com.chukimmuoi.googlewebrtcdemo.client.web;
 
 import android.util.Log;
 
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.List;
 
-import com.chukimmuoi.googlewebrtcdemo.AppRTCClient.SignalingParameters;
+import com.chukimmuoi.googlewebrtcdemo.client.AppRTCClient.SignalingParameters;
 import com.chukimmuoi.googlewebrtcdemo.util.AsyncHttpURLConnection;
 import com.chukimmuoi.googlewebrtcdemo.util.AsyncHttpURLConnection.AsyncHttpEvents;
 

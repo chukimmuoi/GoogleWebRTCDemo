@@ -8,16 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-package com.chukimmuoi.googlewebrtcdemo;
+package com.chukimmuoi.googlewebrtcdemo.client.web;
 
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.chukimmuoi.googlewebrtcdemo.RoomParametersFetcher.RoomParametersFetcherEvents;
-import com.chukimmuoi.googlewebrtcdemo.WebSocketChannelClient.WebSocketChannelEvents;
-import com.chukimmuoi.googlewebrtcdemo.WebSocketChannelClient.WebSocketConnectionState;
+import com.chukimmuoi.googlewebrtcdemo.client.AppRTCClient;
+import com.chukimmuoi.googlewebrtcdemo.client.web.RoomParametersFetcher.RoomParametersFetcherEvents;
+import com.chukimmuoi.googlewebrtcdemo.client.web.WebSocketChannelClient.WebSocketChannelEvents;
+import com.chukimmuoi.googlewebrtcdemo.client.web.WebSocketChannelClient.WebSocketConnectionState;
 import com.chukimmuoi.googlewebrtcdemo.util.AsyncHttpURLConnection;
 import com.chukimmuoi.googlewebrtcdemo.util.AsyncHttpURLConnection.AsyncHttpEvents;
 

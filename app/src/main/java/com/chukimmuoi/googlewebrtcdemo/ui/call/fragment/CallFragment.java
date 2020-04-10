@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-package com.chukimmuoi.googlewebrtcdemo;
+package com.chukimmuoi.googlewebrtcdemo.ui.call.fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -19,6 +19,10 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import com.chukimmuoi.googlewebrtcdemo.util.capture.CaptureQualityController;
+import com.chukimmuoi.googlewebrtcdemo.R;
+import com.chukimmuoi.googlewebrtcdemo.ui.call.CallActivity;
 
 import org.webrtc.RendererCommon.ScalingType;
 

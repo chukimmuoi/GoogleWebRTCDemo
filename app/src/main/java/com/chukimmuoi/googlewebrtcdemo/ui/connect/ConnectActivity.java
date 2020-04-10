@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-package com.chukimmuoi.googlewebrtcdemo;
+package com.chukimmuoi.googlewebrtcdemo.ui.connect;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -38,6 +38,10 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.chukimmuoi.googlewebrtcdemo.R;
+import com.chukimmuoi.googlewebrtcdemo.ui.setting.SettingsActivity;
+import com.chukimmuoi.googlewebrtcdemo.ui.call.CallActivity;
 
 import java.util.ArrayList;
 import java.util.Random;
