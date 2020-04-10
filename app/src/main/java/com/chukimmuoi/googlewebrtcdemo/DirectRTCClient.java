@@ -26,6 +26,9 @@ import org.webrtc.IceCandidate;
 import org.webrtc.SessionDescription;
 
 /**
+ * Triển khai AppRTCClient sử dụng kết nối TCP trực tiếp làm kênh báo hiệu.
+ * Điều này loại bỏ sự cần thiết cho một máy chủ bên ngoài.
+ * Lớp này không hỗ trợ kết nối loopback.
  * Implementation of AppRTCClient that uses direct TCP connection as the signaling channel.
  * This eliminates the need for an external server. This class does not support loopback
  * connections.
@@ -34,6 +37,7 @@ public class DirectRTCClient implements AppRTCClient, TCPChannelClient.TCPChanne
     private static final String TAG = "DirectRTCClient";
     private static final int DEFAULT_PORT = 8888;
 
+    // Mẫu Regex được sử dụng để kiểm tra xem id phòng có giống IP không.
     // Regex pattern used for checking if room id looks like an IP.
     static final Pattern IP_PATTERN = Pattern.compile("("
             // IPv4
@@ -59,6 +63,7 @@ public class DirectRTCClient implements AppRTCClient, TCPChannelClient.TCPChanne
 
     private enum ConnectionState {NEW, CONNECTED, CLOSED, ERROR}
 
+    // Tất cả các thay đổi của trạng thái phòng nên được thực hiện từ bên trong chuỗi looper.
     // All alterations of the room state should be done from inside the looper thread.
     private ConnectionState roomState;
 
@@ -70,6 +75,8 @@ public class DirectRTCClient implements AppRTCClient, TCPChannelClient.TCPChanne
     }
 
     /**
+     * Kết nối với phòng, roomId trong các kết nối được yêu cầu. roomId phải là hợp lệ
+     * Địa chỉ IP khớp với IP_PATTERN.
      * Connects to the room, roomId in connectionsParameters is required. roomId must be a valid
      * IP address matching IP_PATTERN.
      */
@@ -100,6 +107,9 @@ public class DirectRTCClient implements AppRTCClient, TCPChannelClient.TCPChanne
     }
 
     /**
+     * Kết nối với phòng.
+     * <p>
+     * Chạy trên chủ đề looper.
      * Connects to the room.
      * <p>
      * Runs on the looper thread.
@@ -134,6 +144,9 @@ public class DirectRTCClient implements AppRTCClient, TCPChannelClient.TCPChanne
     }
 
     /**
+     * Ngắt kết nối khỏi phòng.
+     * <p>
+     * Chạy trên chủ đề looper.
      * Disconnects from the room.
      * <p>
      * Runs on the looper thread.
@@ -199,6 +212,7 @@ public class DirectRTCClient implements AppRTCClient, TCPChannelClient.TCPChanne
     }
 
     /**
+     * Gửi các ứng cử viên Ice đã loại bỏ cho người tham gia khác.
      * Send removed Ice candidates to the other participant.
      */
     @Override
@@ -227,6 +241,7 @@ public class DirectRTCClient implements AppRTCClient, TCPChannelClient.TCPChanne
     // TCPChannelClient event handlers
 
     /**
+     * Nếu máy khách là phía máy chủ, điều này sẽ kích hoạt onConnectedToRoom.
      * If the client is the server side, this will trigger onConnectedToRoom.
      */
     @Override
@@ -235,6 +250,7 @@ public class DirectRTCClient implements AppRTCClient, TCPChannelClient.TCPChanne
             roomState = ConnectionState.CONNECTED;
 
             SignalingParameters parameters = new SignalingParameters(
+                    // Máy chủ ICE không cần thiết cho các kết nối trực tiếp.
                     // Ice servers are not needed for direct connections.
                     new ArrayList<>(),
                     isServer, // Server side acts as the initiator on direct connections.
@@ -271,6 +287,7 @@ public class DirectRTCClient implements AppRTCClient, TCPChannelClient.TCPChanne
                         SessionDescription.Type.fromCanonicalForm(type), json.getString("sdp"));
 
                 SignalingParameters parameters = new SignalingParameters(
+                        // Máy chủ ICE không cần thiết cho các kết nối trực tiếp.
                         // Ice servers are not needed for direct connections.
                         new ArrayList<>(),
                         false, // This code will only be run on the client side. So, we are not the initiator.
@@ -333,6 +350,7 @@ public class DirectRTCClient implements AppRTCClient, TCPChannelClient.TCPChanne
         }
     }
 
+    // Chuyển đổi một ứng cử viên Java thành JSONObject.
     // Converts a Java candidate to a JSONObject.
     private static JSONObject toJsonCandidate(final IceCandidate candidate) {
         JSONObject json = new JSONObject();
@@ -342,6 +360,7 @@ public class DirectRTCClient implements AppRTCClient, TCPChannelClient.TCPChanne
         return json;
     }
 
+    // Chuyển đổi một ứng cử viên JSON thành một đối tượng Java.
     // Converts a JSON candidate to a Java object.
     private static IceCandidate toJavaCandidate(JSONObject json) throws JSONException {
         return new IceCandidate(

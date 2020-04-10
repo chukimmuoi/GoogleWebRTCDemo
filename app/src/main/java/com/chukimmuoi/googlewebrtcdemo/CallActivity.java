@@ -336,6 +336,8 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
 
         Log.d(TAG, "VIDEO_FILE: '" + intent.getStringExtra(EXTRA_VIDEO_FILE_AS_CAMERA) + "'");
 
+        // Tạo kết nối máy khách.
+        // Sử dụng DirectRTCClient nếu tên phòng là IP nếu không sử dụng WebSocketRTCClient tiêu chuẩn.
         // Create connection client. Use DirectRTCClient if room name is an IP otherwise use the
         // standard WebSocketRTCClient.
         if (loopback || !DirectRTCClient.IP_PATTERN.matcher(roomId).matches()) {
