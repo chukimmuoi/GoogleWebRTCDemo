@@ -83,12 +83,16 @@ class CpuMonitor {
     private static final int CPU_STAT_LOG_PERIOD_MS = 6000;
 
     private final Context appContext;
+    // Sử dụng CPU của người dùng ở tần số hiện tại.
     // User CPU usage at current frequency.
     private final MovingAverage userCpuUsage;
+    // Sử dụng CPU hệ thống ở tần số hiện tại.
     // System CPU usage at current frequency.
     private final MovingAverage systemCpuUsage;
+    // Tổng mức sử dụng CPU liên quan đến tần số tối đa.
     // Total CPU usage relative to maximum frequency.
     private final MovingAverage totalCpuUsage;
+    // Tần số CPU tính theo tỷ lệ phần trăm từ mức tối đa.
     // CPU frequency in percentage from maximum.
     private final MovingAverage frequencyScale;
 
@@ -290,6 +294,7 @@ class CpuMonitor {
     }
 
     private int getBatteryLevel() {
+        // Sử dụng phát sóng dính với máy thu null để chỉ đọc mức pin một lần.
         // Use sticky broadcast with null receiver to read battery level once only.
         Intent intent = appContext.registerReceiver(
                 null /* receiver */, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
@@ -303,7 +308,14 @@ class CpuMonitor {
         return batteryLevel;
     }
 
+
     /**
+     * Đo lại sử dụng CPU. Gọi phương thức này trong khoảng 1/s.
+     * Phương pháp này trả về đúng khi thành công. Những cánh đồng
+     * cpuC hiện tại, cpuAvg3 và cpuAvg ALL được cập nhật thành công và thể hiện:
+     * cpuC hiện tại: CPU sử dụng kể từ cuộc gọi mẫu cuối cùng.
+     * cpuAvg3: CPU trung bình trong 3 cuộc gọi gần nhất.
+     * cpuAvg ALL: CPU trung bình trong các cuộc gọi SAMPLE_SAVE_NUMBER cuối cùng.
      * Re-measure CPU use.  Call this method at an interval of around 1/s.
      * This method returns true on success.  The fields
      * cpuCurrent, cpuAvg3, and cpuAvgAll are updated on success, and represents:
@@ -326,6 +338,9 @@ class CpuMonitor {
         actualCpusPresent = 0;
         for (int i = 0; i < cpusPresent; i++) {
             /*
+             * Đối với mỗi CPU, trước tiên hãy cố gắng đọc tần số tối đa của nó, sau đó là tần số của nó
+             * tần số hiện tại. Một khi tần số tối đa cho CPU được tìm thấy,
+             * lưu nó trong cpuFreqMax [].
              * For each CPU, attempt to first read its max frequency, then its
              * current frequency.  Once as the max frequency for a CPU is found,
              * save it in cpuFreqMax[].
@@ -333,20 +348,24 @@ class CpuMonitor {
 
             curFreqScales[i] = 0;
             if (cpuFreqMax[i] == 0) {
+                // Chúng tôi chưa bao giờ tìm thấy tần số tối đa của CPU này. Cố gắng đọc nó.
                 // We have never found this CPU's max frequency.  Attempt to read it.
                 long cpufreqMax = readFreqFromFile(maxPath[i]);
                 if (cpufreqMax > 0) {
                     Log.d(TAG, "Core " + i + ". Max frequency: " + cpufreqMax);
                     lastSeenMaxFreq = cpufreqMax;
                     cpuFreqMax[i] = cpufreqMax;
-                    maxPath[i] = null; // Kill path to free its memory.
+                    maxPath[i] = null;  // Kill path to free its memory.
+                                        // Giết con đường để giải phóng bộ nhớ của nó.
                 }
             } else {
                 lastSeenMaxFreq = cpuFreqMax[i]; // A valid, previously read value.
+                                                 // Một giá trị hợp lệ, đã đọc trước đó.
             }
 
             long cpuFreqCur = readFreqFromFile(curPath[i]);
             if (cpuFreqCur == 0 && lastSeenMaxFreq == 0) {
+                // Không có thông tin tần số hiện tại cho lõi CPU này - bỏ qua nó.
                 // No current frequency information for this CPU core - ignore it.
                 continue;
             }
@@ -355,6 +374,12 @@ class CpuMonitor {
             }
             cpuFreqCurSum += cpuFreqCur;
 
+            /* Ở đây, lastSeenMaxFreq có thể đến từ
+             * 1. cpuFreq [i] hoặc
+             * 2. một lần lặp trước, hoặc
+             * 3. một giá trị mới đọc, hoặc
+             * 4. giả thuyết từ hình nộm trước vòng lặp.
+             * /
             /* Here, lastSeenMaxFreq might come from
              * 1. cpuFreq[i], or
              * 2. a previous iteration, or
@@ -373,6 +398,11 @@ class CpuMonitor {
         }
 
         /*
+         * Vì số chu kỳ là cho khoảng thời gian giữa lần gọi cuối cùng
+         * và hiện tại, chúng tôi trung bình tần số CPU phần trăm giữa
+         * bây giờ và bắt đầu của giai đoạn đo lường. Điều này là đáng kể
+         * chỉ không chính xác nếu tần số bị lén hoặc rơi vào giữa
+         * viện dẫn.
          * Since the cycle counts are for the period between the last invocation
          * and this present one, we average the percentual CPU frequencies between
          * now and the beginning of the measurement period.  This is significantly
@@ -398,6 +428,7 @@ class CpuMonitor {
             return false;
         }
 
+        // Cập nhật số liệu thống kê.
         // Update statistics.
         frequencyScale.addValue(currentFrequencyScale);
 
@@ -411,6 +442,7 @@ class CpuMonitor {
                 (currentUserCpuUsage + currentSystemCpuUsage) * currentFrequencyScale;
         totalCpuUsage.addValue(currentTotalCpuUsage);
 
+        // Lưu số đo mới cho đồng bằng của vòng tiếp theo.
         // Save new measurements for next round's deltas.
         lastProcStat = procStat;
 
@@ -453,6 +485,8 @@ class CpuMonitor {
     }
 
     /**
+     * Đọc một giá trị số nguyên duy nhất từ tệp được đặt tên. Trả về giá trị đọc
+     * hoặc nếu xảy ra lỗi trả về 0.
      * Read a single integer value from the named file.  Return the read value
      * or if an error occurs return 0.
      */
@@ -464,9 +498,13 @@ class CpuMonitor {
             String line = reader.readLine();
             number = parseLong(line);
         } catch (FileNotFoundException e) {
+            // Lõi CPU bị tắt, do đó, tệp có tần số mở rộng ... /cpufreq/scaling_cur_freq
+            // không phải bây giờ. Đây không phải là một lỗi.
             // CPU core is off, so file with its scaling frequency .../cpufreq/scaling_cur_freq
             // is not present. This is not an error.
         } catch (IOException e) {
+            // Lõi CPU bị tắt, do đó, tệp có tần số mở rộng ... /cpufreq/scaling_cur_freq
+            // trống. Đây không phải là một lỗi.
             // CPU core is off, so file with its scaling frequency .../cpufreq/scaling_cur_freq
             // is empty. This is not an error.
         }
@@ -484,6 +522,8 @@ class CpuMonitor {
     }
 
     /*
+     * Đọc mức sử dụng hiện tại của tất cả các CPU bằng dòng đầu tiên tích lũy
+     * của /Proc/stat.
      * Read the current utilization of all CPUs using the cumulative first line
      * of /proc/stat.
      */
