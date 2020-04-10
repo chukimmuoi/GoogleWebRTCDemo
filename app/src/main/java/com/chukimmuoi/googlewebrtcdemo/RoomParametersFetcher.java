@@ -32,6 +32,8 @@ import org.webrtc.PeerConnection;
 import org.webrtc.SessionDescription;
 
 /**
+ * AsyncTask chuyển đổi URL phòng AppRTC thành tập hợp báo hiệu
+ * thông số để sử dụng với căn phòng đó.
  * AsyncTask that converts an AppRTC room URL into the set of signaling
  * parameters to use with that room.
  */
@@ -160,6 +162,8 @@ public class RoomParametersFetcher {
         }
     }
 
+    // Yêu cầu và trả về TURN ICE Server dựa trên URL yêu cầu.
+    // Phải chạy tắt chủ đề chính!
     // Requests & returns a TURN ICE Server based on a request URL.  Must be run
     // off the main thread!
     private List<PeerConnection.IceServer> requestTurnServers(String url)
@@ -200,6 +204,7 @@ public class RoomParametersFetcher {
         return turnServers;
     }
 
+    // Trả về danh sách các máy chủ ICE được mô tả bởi WebRTCPeerConnection chuỗi cấu hình.
     // Return the list of ICE servers described by a WebRTCPeerConnection
     // configuration string.
     private List<PeerConnection.IceServer> iceServersFromPCConfigJSON(String pcConfig)
@@ -220,6 +225,7 @@ public class RoomParametersFetcher {
         return ret;
     }
 
+    // Trả về nội dung của InputStream dưới dạng Chuỗi.
     // Return the contents of an InputStream as a String.
     private static String drainStream(InputStream in) {
         Scanner s = new Scanner(in, "UTF-8").useDelimiter("\\A");

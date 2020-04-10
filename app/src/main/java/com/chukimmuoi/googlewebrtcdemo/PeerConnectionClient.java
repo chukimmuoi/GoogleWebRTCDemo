@@ -81,6 +81,11 @@ import org.webrtc.audio.JavaAudioDeviceModule.AudioTrackErrorCallback;
 import org.webrtc.audio.JavaAudioDeviceModule.AudioTrackStateCallback;
 
 /**
+ * Thực hiện kết nối máy khách ngang hàng.
+ *
+ * <p> Tất cả các phương thức công khai được định tuyến đến luồng looper cục bộ.
+ * Tất cả các cuộc gọi lại PeerConnectionEvents được gọi từ cùng một chuỗi looper.
+ * Lớp này là một singleton.
  * Peer connection client implementation.
  *
  * <p>All public methods are routed to local looper thread.
@@ -116,6 +121,9 @@ public class PeerConnectionClient {
     private static final int BPS_IN_KBPS = 1000;
     private static final String RTCEVENTLOG_OUTPUT_DIR_NAME = "rtc_event_log";
 
+    // Chuỗi thực thi được bắt đầu một lần trong ctor riêng và được sử dụng cho tất cả
+    // các lệnh gọi API kết nối ngang hàng để đảm bảo nhà máy kết nối ngang hàng mới được
+    // được tạo trên cùng một luồng với nhà máy đã bị phá hủy trước đó.
     // Executor thread is started once in private ctor and is used for all
     // peer connection API calls to ensure new peer connection factory is
     // created on the same thread as previously destroyed factory.
@@ -152,6 +160,9 @@ public class PeerConnectionClient {
     private int videoFps;
     private MediaConstraints audioConstraints;
     private MediaConstraints sdpMediaConstraints;
+    // Các ứng cử viên ICE từ xa được xếp hàng chỉ được sử dụng sau cả cục bộ và
+    // mô tả từ xa được đặt. Tương tự các ứng cử viên ICE địa phương được gửi đến
+    // từ xa ngang hàng sau khi cả mô tả cục bộ và từ xa được đặt.
     // Queued remote ICE candidates are consumed only after both local and
     // remote descriptions are set. Similarly local ICE candidates are sent to
     // remote peer after both local and remote description are set.
@@ -160,8 +171,10 @@ public class PeerConnectionClient {
     private boolean isInitiator;
     @Nullable
     private SessionDescription localSdp; // either offer or answer SDP
+                                         // cung cấp hoặc trả lời SDP
     @Nullable
     private VideoCapturer videoCapturer;
+    // enableVideo được đặt thành true nếu video được hiển thị và gửi.
     // enableVideo is set to true if video should be rendered and sent.
     private boolean renderVideo = true;
     @Nullable
@@ -170,6 +183,7 @@ public class PeerConnectionClient {
     private VideoTrack remoteVideoTrack;
     @Nullable
     private RtpSender localVideoSender;
+    // enableAudio được đặt thành true nếu âm thanh phải được gửi.
     // enableAudio is set to true if audio should be sent.
     private boolean enableAudio = true;
     @Nullable
@@ -177,15 +191,19 @@ public class PeerConnectionClient {
     @Nullable
     private DataChannel dataChannel;
     private final boolean dataChannelEnabled;
+    // Kích hoạt RtcEventLog.
     // Enable RtcEventLog.
     @Nullable
     private RtcEventLog rtcEventLog;
+    // Triển khai giao diện WebRtcAudioRecordSamplesReadyCallback
+    // và ghi các mẫu âm thanh đã ghi vào tệp đầu ra.
     // Implements the WebRtcAudioRecordSamplesReadyCallback interface and writes
     // recorded audio samples to an output file.
     @Nullable
     private RecordedAudioToFileController saveRecordedAudioToFile;
 
     /**
+     * Thông số kết nối ngang hàng.
      * Peer connection parameters.
      */
     public static class DataChannelParameters {
@@ -208,6 +226,7 @@ public class PeerConnectionClient {
     }
 
     /**
+     * Thông số kết nối ngang hàng.
      * Peer connection parameters.
      */
     public static class PeerConnectionParameters {
@@ -267,6 +286,7 @@ public class PeerConnectionClient {
     }
 
     /**
+     * Sự kiện kết nối ngang hàng.
      * Peer connection events.
      */
     public interface PeerConnectionEvents {
@@ -326,6 +346,8 @@ public class PeerConnectionClient {
     }
 
     /**
+     * Tạo một PeerConnectionClient với các tham số đã chỉ định.
+     * PeerConnectionClient có quyền sở hữu | eglBase |.
      * Create a PeerConnectionClient with the specified parameters. PeerConnectionClient takes
      * ownership of |eglBase|.
      */
@@ -351,6 +373,7 @@ public class PeerConnectionClient {
     }
 
     /**
+     * Chức năng này chỉ nên được gọi một lần.
      * This function should only be called once.
      */
     public void createPeerConnectionFactory(PeerConnectionFactory.Options options) {
@@ -408,10 +431,16 @@ public class PeerConnectionClient {
                             + "webrtc-trace.txt");
         }
 
+        // Kiểm tra nếu ISAC được sử dụng theo mặc định.
         // Check if ISAC is used by default.
         preferIsac = peerConnectionParameters.audioCodec != null
                 && peerConnectionParameters.audioCodec.equals(AUDIO_CODEC_ISAC);
 
+        // Có thể lưu một bản sao ở định dạng PCM thô trên một tệp bằng cách kiểm tra
+        // hộp kiểm "Lưu âm thanh đầu vào vào tệp" trong UI Cài đặt. Một cuộc gọi lại
+        // giao diện được đặt khi cờ này được bật. Kết quả là một bản sao được ghi lại
+        // mẫu âm thanh được cung cấp cho khách hàng này trực tiếp từ âm thanh gốc
+        // lớp trong Java.
         // It is possible to save a copy in raw PCM format on a file by checking
         // the "Save input audio to file" checkbox in the Settings UI. A callback
         // interface is set when this flag is enabled. As a result, a copy of recorded
@@ -422,6 +451,8 @@ public class PeerConnectionClient {
                 Log.d(TAG, "Enable recording of microphone input audio to file");
                 saveRecordedAudioToFile = new RecordedAudioToFileController(executor);
             } else {
+                // TODO(henrika): đảm bảo rằng UI phản ánh rằng nếu OpenSL ES được chọn,
+                // sau đó tùy chọn "Lưu âm thanh đầu vào vào tập tin" sẽ được tô xám.
                 // TODO(henrika): ensure that the UI reflects that if OpenSL ES is selected,
                 // then the "Save inut audio to file" option shall be grayed out.
                 Log.e(TAG, "Recording of input audio is not supported for OpenSL ES");
@@ -430,6 +461,7 @@ public class PeerConnectionClient {
 
         final AudioDeviceModule adm = createJavaAudioDevice();
 
+        // Tạo nhà máy kết nối ngang hàng.
         // Create peer connection factory.
         if (options != null) {
             Log.d(TAG, "Factory networkIgnoreMask option: " + options.networkIgnoreMask);
@@ -459,12 +491,15 @@ public class PeerConnectionClient {
     }
 
     AudioDeviceModule createJavaAudioDevice() {
+        // Kích hoạt/vô hiệu hóa phát lại OpenSL ES.
         // Enable/disable OpenSL ES playback.
         if (!peerConnectionParameters.useOpenSLES) {
             Log.w(TAG, "External OpenSLES ADM not implemented yet.");
+            // TODO(magjed): Thêm hỗ trợ cho ADL OpenSLES bên ngoài.
             // TODO(magjed): Add support for external OpenSLES ADM.
         }
 
+        // Đặt cuộc gọi lại bản ghi lỗi âm thanh.
         // Set audio record error callbacks.
         AudioRecordErrorCallback audioRecordErrorCallback = new AudioRecordErrorCallback() {
             @Override
@@ -508,6 +543,7 @@ public class PeerConnectionClient {
             }
         };
 
+        // Đặt cuộc gọi lại trạng thái bản ghi âm thanh.
         // Set audio record state callbacks.
         AudioRecordStateCallback audioRecordStateCallback = new AudioRecordStateCallback() {
             @Override
@@ -521,6 +557,7 @@ public class PeerConnectionClient {
             }
         };
 
+        // Đặt cuộc gọi lại trạng thái theo dõi âm thanh.
         // Set audio track state callbacks.
         AudioTrackStateCallback audioTrackStateCallback = new AudioTrackStateCallback() {
             @Override
@@ -546,18 +583,21 @@ public class PeerConnectionClient {
     }
 
     private void createMediaConstraintsInternal() {
+        // Tạo các ràng buộc video nếu cuộc gọi video được kích hoạt.
         // Create video constraints if video call is enabled.
         if (isVideoCallEnabled()) {
             videoWidth = peerConnectionParameters.videoWidth;
             videoHeight = peerConnectionParameters.videoHeight;
             videoFps = peerConnectionParameters.videoFps;
 
+            // Nếu độ phân giải video không được chỉ định, mặc định là HD.
             // If video resolution is not specified, default to HD.
             if (videoWidth == 0 || videoHeight == 0) {
                 videoWidth = HD_VIDEO_WIDTH;
                 videoHeight = HD_VIDEO_HEIGHT;
             }
 
+            // Nếu khung hình/giây không được chỉ định, mặc định là 30.
             // If fps is not specified, default to 30.
             if (videoFps == 0) {
                 videoFps = 30;
@@ -565,8 +605,10 @@ public class PeerConnectionClient {
             Logging.d(TAG, "Capturing format: " + videoWidth + "x" + videoHeight + "@" + videoFps);
         }
 
+        // Tạo các ràng buộc âm thanh.
         // Create audio constraints.
         audioConstraints = new MediaConstraints();
+        // được thêm vào để đo hiệu suất âm thanh
         // added for audio performance measurements
         if (peerConnectionParameters.noAudioProcessing) {
             Log.d(TAG, "Disabling audio processing");
@@ -579,6 +621,7 @@ public class PeerConnectionClient {
             audioConstraints.mandatory.add(
                     new MediaConstraints.KeyValuePair(AUDIO_NOISE_SUPPRESSION_CONSTRAINT, "false"));
         }
+        // Tạo các ràng buộc SDP.
         // Create SDP constraints.
         sdpMediaConstraints = new MediaConstraints();
         sdpMediaConstraints.mandatory.add(

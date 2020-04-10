@@ -26,6 +26,8 @@ import org.webrtc.audio.JavaAudioDeviceModule;
 import org.webrtc.audio.JavaAudioDeviceModule.SamplesReadyCallback;
 
 /**
+ * Triển khai giao diện AudioRecordSamplesReadyCallback và ghi
+ * ghi mẫu âm thanh thô vào một tập tin đầu ra.
  * Implements the AudioRecordSamplesReadyCallback interface and writes
  * recorded raw audio samples to an output file.
  */

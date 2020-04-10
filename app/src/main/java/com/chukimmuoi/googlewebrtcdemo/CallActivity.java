@@ -376,6 +376,7 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
             }, runTimeMs);
         }
 
+        // Tạo khách hàng kết nối ngang hàng.
         // Create peer connection client.
         peerConnectionClient = new PeerConnectionClient(
                 getApplicationContext(), eglBase, peerConnectionParameters, CallActivity.this);

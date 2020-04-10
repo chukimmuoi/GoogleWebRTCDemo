@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Fragment cho hiển thị thống kê HUD.
  * Fragment for HUD statistics display.
  */
 public class HudFragment extends Fragment {
